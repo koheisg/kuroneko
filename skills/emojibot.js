@@ -1,31 +1,30 @@
-/*
-
-    This is a sample bot that provides a simple todo list function
-    and demonstrates the Botkit storage system.
-
-    Botkit comes with a generic storage system that can be used to
-    store arbitrary information about a user or channel. Storage
-    can be backed by a built in JSON file system, or one of many
-    popular database systems.
-
-    See:
-
-        botkit-storage-mongo
-        botkit-storage-firebase
-        botkit-storage-redis
-        botkit-storage-dynamodb
-        botkit-storage-mysql
-
-*/
-
 module.exports = function(controller) {
 
     controller.hears(['emoji'], 'direct_message', function(bot, message) {
-
-        // load user from storage...
         controller.storage.users.get(message.user, function(err, user) {
-            bot.reply(message, ':emoji:');
+            var a = message.event.text.split(' ');
+            var command = a[1];
+            var symbol = a[2];
+            var moji = a[3]
+            
+            var url = 'https://emoji.pine.moe/emoji'
+                    + '?align=center'
+                    + '&back_color=00000000'
+                    + '&color=00FF00FF'
+                    + '&font=notosans-mono-bold'
+                    + '&public_fg=true'
+                    + '&size_fixed=true'
+                    + '&stretch=true'
+                    + '&text=' + moji;
+          
+            var yml = require('js-yaml').dump({"emojis": [{'name': symbol, 'src': url}]});
+            var fs = require('fs')
+            fs.writeFileSync("./tmp/output.yml" , yml);
+          
+            //uploadEmoji(symbol, url);
+            bot.reply(message, ":" + symbol + ":");
         });
 
     });
 }
+
